@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ps-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ps-app
+  template:
+    metadata:
+      labels:
+        app: ps-app
+    spec:
+      containers:
+        - name: ps-app-container
+          image: public.ecr.aws/s0z5h1j3/product-app:latest
