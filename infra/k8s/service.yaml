@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ps-app-service
+  labels:
+    group: app
 spec:
   selector:
     app: ps-app
