@@ -1,5 +1,7 @@
+INFRA_DIR := infra
+
 build:
-	docker build -t product-store-app .
+	docker build -f $(INFRA_DIR)/docker/Dockerfile -t product-store-app .
 
 run:
 	docker run --rm -v ./app:/code/app --name app -p 80:80 public.ecr.aws/s0z5h1j3/product-app:latest
