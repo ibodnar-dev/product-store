@@ -15,6 +15,9 @@ push_app_image:
 mk_start:
 	minikube start --driver=docker
 
+mk_dashboard:
+	minikube dashboard
+
 kl_apply_deployment:
 	kubectl apply -f=$(APP_DEPLOYMENT_YAML)
 
