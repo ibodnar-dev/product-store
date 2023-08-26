@@ -16,4 +16,4 @@ spec:
     spec:
       containers:
         - name: ps-app-container
-          image: public.ecr.aws/s0z5h1j3/product-app:latest
+          image: ${APP_REPO_URI}

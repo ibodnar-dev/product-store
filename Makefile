@@ -1,16 +1,21 @@
 INFRA_DIR := infra
 APP_DEPLOYMENT_YAML := $(INFRA_DIR)/k8s/deployment.yaml
 APP_SERVICE_YAML := $(INFRA_DIR)/k8s/service.yaml
+APP_CONFIGMAP_YAML := $(INFRA_DIR)/k8s/configmap.yaml
 APP_ALL_TAG := app
+APP_REPO_URI_FILE_PATH := $(INFRA_DIR)/terraform/app-repo-uri
+APP_REPO_URI := $(shell cat ${APP_REPO_URI_FILE_PATH})
 
 build:
-	docker build -f $(INFRA_DIR)/docker/Dockerfile -t product-store-app .
+	docker build -f $(INFRA_DIR)/docker/Dockerfile -t ${APP_REPO_URI} .
 
 run:
-	docker run --rm -v ./app:/code/app --name app -p 80:80 public.ecr.aws/s0z5h1j3/product-app:latest
+	docker run --rm -v ./app:/code/app --name app -p 80:80 ${APP_REPO_URI}
 
 push_app_image:
-	docker push public.ecr.aws/s0z5h1j3/product-app:latest
+	aws ecr-public get-login-password --region us-east-1 \
+ 	| docker login --username AWS --password-stdin public.ecr.aws \
+ 	&& docker push ${APP_REPO_URI}
 
 mk_start:
 	minikube start --driver=docker
@@ -19,7 +24,7 @@ mk_dashboard:
 	minikube dashboard
 
 kl_apply_deployment:
-	kubectl apply -f=$(APP_DEPLOYMENT_YAML)
+	export APP_REPO_URI=${APP_REPO_URI} && envsubst < $(APP_DEPLOYMENT_YAML) | kubectl apply -f -
 
 kl_apply_service:
 	kubectl apply -f=$(APP_SERVICE_YAML)
